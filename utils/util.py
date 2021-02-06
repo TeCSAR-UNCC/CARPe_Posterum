@@ -15,7 +15,6 @@
 #util.py
 import torch
 import os
-import cv2
 import numpy as np
 from torch_geometric.data import Data
 from torch_geometric.data.batch import Batch as tgb
@@ -47,7 +46,6 @@ def l2_loss(pred_traj, pred_traj_gt, loss_mask, random=0, mode='average'):
     Output:
     - loss: l2 loss depending on mode
     """
-    #seq_len, batch, _ = pred_traj.size()
     loss = (loss_mask.unsqueeze(dim=2) *
             (pred_traj_gt.squeeze(dim=1) - pred_traj)**2)
     if mode == 'sum':
@@ -135,10 +133,9 @@ def train(model, train_loader, optimizer, device, obs_step):
         (obs_traj, pred_traj_gt, obs_traj_rel, pred_traj_gt_rel,
             non_linear_ped, loss_mask, seq_start_end, _ ) = batch
         optimizer.zero_grad()
-        #####
+        
         data_list = getGraphDataList(obs_traj,obs_traj_rel, seq_start_end)
         graph_batch = tgb.from_data_list(data_list)
-        #####
 
         pred_traj = model(obs_traj_rel, graph_batch.x.to(device), graph_batch.edge_index.to(device))
         pred_traj = pred_traj.reshape(pred_traj.shape[0],12,2)
@@ -147,7 +144,6 @@ def train(model, train_loader, optimizer, device, obs_step):
 
         loss_mask = loss_mask[:, obs_step:]
         loss = l2_loss(pred_traj_real, pred_traj_gt, loss_mask, mode='average')
-        #print(loss)
         losses.append(loss.item())
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 5)
@@ -164,10 +160,9 @@ def test(model, test_loader, device):
             non_linear_ped, loss_mask, seq_start_end, _) = batch
         total_traj += pred_traj_gt.size(0)
 
-        #####
         data_list = getGraphDataList(obs_traj,obs_traj_rel, seq_start_end)
         graph_batch = tgb.from_data_list(data_list)       
-        #####
+        
         pred_traj = model(obs_traj_rel, graph_batch.x.to(device), graph_batch.edge_index.to(device))
         pred_traj = pred_traj.reshape(pred_traj.shape[0],12,2).detach()
 

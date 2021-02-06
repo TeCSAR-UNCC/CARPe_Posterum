@@ -33,12 +33,6 @@ def seq_collate(data):
     seq_start_end = [[start, end]
                      for start, end in zip(cum_start_idx, cum_start_idx[1:])]
 
-    # Data format: batch, input_size, seq_len
-    # LSTM input format: seq_len, batch, input_size
-    # obs_traj = torch.cat(obs_seq_list, dim=0).permute(2, 0, 1)
-    # pred_traj = torch.cat(pred_seq_list, dim=0).permute(2, 0, 1)
-    # obs_traj_rel = torch.cat(obs_seq_rel_list, dim=0).permute(2, 0, 1)
-    # pred_traj_rel = torch.cat(pred_seq_rel_list, dim=0).permute(2, 0, 1)
     obs_traj = torch.cat(obs_seq_list, dim=0).unsqueeze(1).permute(0, 1, 3, 2)
     pred_traj = torch.cat(pred_seq_list, dim=0).unsqueeze(1).permute(0, 1, 3, 2)
     obs_traj_rel = torch.cat(obs_seq_rel_list, dim=0).unsqueeze(1).permute(0, 1, 3, 2)
