@@ -42,4 +42,4 @@ torchaudio==0.7.2
 torchvision==0.8.2+cu110
 tqdm==4.56.0
 typing-extensions==3.7.4.3
-urllib3==1.26.3
+urllib3==1.26.4
